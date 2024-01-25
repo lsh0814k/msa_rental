@@ -10,6 +10,7 @@ public class SwaggerConfig {
     public GroupedOpenApi groupedOpenApi() {
         return GroupedOpenApi.builder()
                 .group("도서 대여 API")
+                .pathsToMatch("*")
                 .build();
     }
 }
