@@ -58,7 +58,7 @@ public class RentalCard {
 
     public void makeAvailableRental(Long point) {
         if (this.rentalItems.size() > 0) throw new IllegalArgumentException("모든 도서가 반납되어야 정지를 해제할 수 있습니다.");
-        if (this.lateFee.getPoint() > point) throw new IllegalArgumentException("해당 포인트로 연체를 해제할 수 없습니다.");
+        if (this.lateFee.getPoint() != point) throw new IllegalArgumentException("해당 포인트로 연체를 해제할 수 없습니다.");
 
         this.lateFee = lateFee.removePoint(point);
         this.rentStatus = RentStatus.RENT_AVAILABLE;
