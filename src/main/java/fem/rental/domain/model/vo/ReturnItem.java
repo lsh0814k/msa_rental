@@ -10,6 +10,7 @@ import static lombok.AccessLevel.*;
 @Getter @Builder(access = PRIVATE)
 @AllArgsConstructor(access = PRIVATE)
 @NoArgsConstructor(access = PROTECTED)
+@EqualsAndHashCode(of = "rentalItem")
 public class ReturnItem {
     private RentalItem rentalItem;
     private LocalDate returnDate;

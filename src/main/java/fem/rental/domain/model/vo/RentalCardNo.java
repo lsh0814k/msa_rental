@@ -11,6 +11,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor(access = PRIVATE)
+@EqualsAndHashCode(of = "no")
 public class RentalCardNo {
     private String no;
 

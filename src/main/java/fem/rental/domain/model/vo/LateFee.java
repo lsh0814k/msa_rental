@@ -7,6 +7,7 @@ import static lombok.AccessLevel.*;
 @Getter
 @AllArgsConstructor(access = PRIVATE)
 @NoArgsConstructor(access = PROTECTED)
+@EqualsAndHashCode(of = "point")
 public class LateFee {
     private Long point;
 
