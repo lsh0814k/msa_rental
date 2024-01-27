@@ -1,6 +1,7 @@
 package fem.rental.domain.model;
 
 import fem.rental.domain.model.vo.*;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -8,6 +9,7 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jakarta.persistence.EnumType.STRING;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -15,12 +17,19 @@ import static lombok.AccessLevel.PROTECTED;
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor(access = PRIVATE)
 @EqualsAndHashCode(of ="rentalCardNo")
+@Entity
 public class RentalCard {
+    @EmbeddedId
     private RentalCardNo rentalCardNo;
+    @Embedded
     private IDName member;
+    @Enumerated(value = STRING)
     private RentStatus rentStatus;
+    @Embedded
     private LateFee lateFee;
+    @OneToMany(mappedBy = "rentalCard")
     private List<RentalItem> rentalItems;
+    @OneToMany(mappedBy = "rentalCard")
     private List<ReturnItem> returnItems;
 
     public static RentalCard createRentalCard(IDName member) {

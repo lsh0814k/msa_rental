@@ -1,5 +1,6 @@
 package fem.rental.domain.model.vo;
 
+import jakarta.persistence.Embeddable;
 import lombok.*;
 
 import static lombok.AccessLevel.*;
@@ -8,6 +9,7 @@ import static lombok.AccessLevel.*;
 @AllArgsConstructor(access = PRIVATE)
 @NoArgsConstructor(access = PROTECTED)
 @EqualsAndHashCode(of = "point")
+@Embeddable
 public class LateFee {
     private Long point;
 

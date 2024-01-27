@@ -1,6 +1,6 @@
 package fem.rental.framework.web.dto;
 
-import fem.rental.domain.model.vo.ReturnItem;
+import fem.rental.domain.model.ReturnItem;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,8 +22,8 @@ public class ReturnItemOutputDTO {
 
     public static ReturnItemOutputDTO mapToDTO(ReturnItem returnItem) {
         return ReturnItemOutputDTO.builder()
-                .itemNo(returnItem.getRentalItem().getItem().getNo())
-                .itemTitle(returnItem.getRentalItem().getItem().getTitle())
+                .itemNo(returnItem.getItem().getNo())
+                .itemTitle(returnItem.getItem().getTitle())
                 .returnDate(returnItem.getReturnDate())
                 .build();
     }
