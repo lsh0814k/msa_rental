@@ -30,12 +30,13 @@ public class RentalItem {
     @JoinColumn(name = "rental_card_id")
     private RentalCard rentalCard;
 
-    public static RentalItem createRentalItem(Item item) {
+    public static RentalItem createRentalItem(Item item, RentalCard rentalCard) {
         return RentalItem.builder()
                 .item(item)
                 .rentDate(LocalDate.now())
                 .overdue(false)
                 .returnDueDate(LocalDate.now().plusDays(14))
+                .rentalCard(rentalCard)
                 .build();
     }
 

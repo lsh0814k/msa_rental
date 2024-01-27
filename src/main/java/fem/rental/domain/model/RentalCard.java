@@ -27,9 +27,9 @@ public class RentalCard {
     private RentStatus rentStatus;
     @Embedded
     private LateFee lateFee;
-    @OneToMany(mappedBy = "rentalCard")
+    @OneToMany(mappedBy = "rentalCard", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RentalItem> rentalItems;
-    @OneToMany(mappedBy = "rentalCard")
+    @OneToMany(mappedBy = "rentalCard", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReturnItem> returnItems;
 
     public static RentalCard createRentalCard(IDName member) {
@@ -45,7 +45,7 @@ public class RentalCard {
 
     public RentalCard rentItem(Item item) {
         checkRentalAvailable();
-        this.addRentalItem(RentalItem.createRentalItem(item));
+        this.addRentalItem(RentalItem.createRentalItem(item, this));
 
         return this;
     }
@@ -54,7 +54,7 @@ public class RentalCard {
         RentalItem rentalItem = this.rentalItems.stream()
                 .filter(i -> i.getItem().equals(item)).findFirst().orElseThrow(() -> new IllegalArgumentException("대여한 품목이 아닙니다."));
         calculateLateFee(rentalItem, now);
-        this.addReturnItem(ReturnItem.createReturnItem(rentalItem));
+        this.addReturnItem(ReturnItem.createReturnItem(rentalItem, this));
         this.removeRentalItem(rentalItem);
 
         return this;

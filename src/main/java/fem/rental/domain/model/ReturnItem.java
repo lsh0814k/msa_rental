@@ -29,7 +29,7 @@ public class ReturnItem {
     @JoinColumn(name = "rental_card_id")
     private RentalCard rentalCard;
 
-    public static ReturnItem createReturnItem(RentalItem rentalItem) {
+    public static ReturnItem createReturnItem(RentalItem rentalItem, RentalCard rentalCard) {
         return ReturnItem
                 .builder()
                 .item(rentalItem.getItem())
@@ -37,6 +37,7 @@ public class ReturnItem {
                 .overdue(rentalItem.isOverdue())
                 .returnDueDate(rentalItem.getReturnDueDate())
                 .returnDate(LocalDate.now())
+                .rentalCard(rentalCard)
                 .build();
     }
 }
