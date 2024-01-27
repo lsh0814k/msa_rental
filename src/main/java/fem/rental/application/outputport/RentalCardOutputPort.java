@@ -10,4 +10,8 @@ public interface RentalCardOutputPort {
     Optional<RentalCard> findByUserId(String userId);
 
     RentalCard save(RentalCard rentalCard);
+
+    Optional<RentalCard> findWithRentItemByUserId(String userId);
+
+    Optional<RentalCard> findWithReturnItemByUserId(String userId);
 }

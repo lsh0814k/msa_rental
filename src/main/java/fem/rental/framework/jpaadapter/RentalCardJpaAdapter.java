@@ -22,4 +22,14 @@ public class RentalCardJpaAdapter implements RentalCardOutputPort {
     public RentalCard save(RentalCard rentalCard) {
         return rentalCardRepository.save(rentalCard);
     }
+
+    @Override
+    public Optional<RentalCard> findWithRentItemByUserId(String userId) {
+        return rentalCardRepository.findWithRentItemByUserId(userId);
+    }
+
+    @Override
+    public Optional<RentalCard> findWithReturnItemByUserId(String userId) {
+        return rentalCardRepository.findWithReturnItemByUserId(userId);
+    }
 }
