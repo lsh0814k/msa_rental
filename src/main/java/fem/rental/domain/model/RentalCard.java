@@ -64,6 +64,12 @@ public class RentalCard {
         this.rentStatus = RentStatus.RENT_AVAILABLE;
     }
 
+    public List<RentalItem> overdueItems() {
+        return this.rentalItems.stream()
+                .filter(RentalItem::isOverdue)
+                .toList();
+    }
+
     private void changeRentStatus() {
         this.rentStatus = this.rentalItems.stream()
                 .filter(RentalItem::isOverdue)
