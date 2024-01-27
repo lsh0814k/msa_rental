@@ -7,7 +7,7 @@ import java.util.Optional;
 
 @Repository
 public interface RentalCardOutputPort {
-    Optional<RentalCard> findById(String userId);
+    Optional<RentalCard> findByUserId(String userId);
 
     RentalCard save(RentalCard rentalCard);
 }

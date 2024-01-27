@@ -36,12 +36,12 @@ public class RentItemInputPort implements RentItemUsecase {
      * @return
      */
     private RentalCard loadRentalCard(UserItemInputDTO userItemInputDto) {
-        Optional<RentalCard> rentalCardOptional = rentalCardOutputPort.findById(userItemInputDto.getUserId());
+        Optional<RentalCard> rentalCardOptional = rentalCardOutputPort.findByUserId(userItemInputDto.getUserId());
         if (rentalCardOptional.isPresent()) {
             return rentalCardOptional.get();
         }
 
         createRentalCardUsecase.createRentalCard(UserInputDTO.createUserInputDTO(userItemInputDto));
-        return rentalCardOutputPort.findById(userItemInputDto.getUserId()).get();
+        return rentalCardOutputPort.findByUserId(userItemInputDto.getUserId()).get();
     }
 }

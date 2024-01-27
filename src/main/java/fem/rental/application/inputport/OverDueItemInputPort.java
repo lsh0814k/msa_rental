@@ -19,7 +19,7 @@ public class OverDueItemInputPort implements OverdueItemUsecase {
 
     @Override
     public RentalCardOutputDTO overDueItem(UserItemInputDTO userItemDto) {
-        RentalCard rentalCard = rentalCardOutputPort.findById(userItemDto.getUserId())
+        RentalCard rentalCard = rentalCardOutputPort.findByUserId(userItemDto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 카드가 존재하지 않습니다."));
         rentalCard.makeOverdueItems(LocalDate.now());
 

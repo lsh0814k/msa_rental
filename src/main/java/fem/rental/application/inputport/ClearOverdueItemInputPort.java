@@ -18,7 +18,7 @@ public class ClearOverdueItemInputPort implements ClearOverdueItemUsecase {
 
     @Override
     public RentalResultOutputDTO clearOverdue(ClearOverdueInfoDTO clearOverdueInfoDto) {
-        RentalCard rentalCard = rentalCardOutputPort.findById(clearOverdueInfoDto.getUserId())
+        RentalCard rentalCard = rentalCardOutputPort.findByUserId(clearOverdueInfoDto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 카드가 존재하지 않습니다."));
         rentalCard.makeAvailableRental(clearOverdueInfoDto.getPoint());
 
