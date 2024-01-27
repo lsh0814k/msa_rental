@@ -12,5 +12,9 @@ public interface RentalCardRepository extends JpaRepository<RentalCard, RentalCa
     @Query(value = "select r from RentalCard r where r.member.id = :id")
     Optional<RentalCard> findByUserId(@Param("id") String id);
 
+    @Query(value = "select r from RentalCard r join fetch r.rentalItems where r.member.id = :id")
+    Optional<RentalCard> findWithRentItemByUserId(@Param("id") String id);
 
+    @Query(value = "select r from RentalCard  r join fetch r.returnItems where r.member.id = :id")
+    Optional<RentalCard> findWithReturnItemByUserId(@Param("id") String id);
 }
