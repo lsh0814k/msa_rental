@@ -10,11 +10,9 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @AllArgsConstructor(access = PRIVATE)
 @NoArgsConstructor(access = PROTECTED)
-public class UserInputDTO {
+public class UserItemInputDTO {
     private String userId;
     private String userNm;
-
-    public static UserInputDTO createUserInputDTO(UserItemInputDTO userItemInputDTO) {
-        return new UserInputDTO(userItemInputDTO.getUserId(), userItemInputDTO.getUserNm());
-    }
+    private Long itemId;
+    private String itemTitle;
 }

@@ -18,8 +18,8 @@ public class CreateRentalCardInputPort implements CreateRentalCardUsecase {
     private final RentalCardOutputPort rentalCardOutputPort;
 
     @Override
-    public RentalCardOutputDTO createRentalCard(UserInputDTO userInputDto) {
-        RentalCard rentalCard = RentalCard.createRentalCard(IDName.createIDName(userInputDto.getUserId(), userInputDto.getUserNm()));
+    public RentalCardOutputDTO createRentalCard(UserInputDTO userInputDTO) {
+        RentalCard rentalCard = RentalCard.createRentalCard(IDName.createIDName(userInputDTO.getUserId(), userInputDTO.getUserNm()));
         RentalCard savedRentalCard = rentalCardOutputPort.save(rentalCard);
         return RentalCardOutputDTO.mapToDTO(savedRentalCard);
     }
