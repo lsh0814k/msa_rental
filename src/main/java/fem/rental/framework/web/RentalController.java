@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.time.LocalDate;
+
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
@@ -35,14 +37,14 @@ public class RentalController {
 
     @PostMapping("/rentalCard/{userId}/return")
     public ResponseEntity<RentalCardOutputDTO> returnItem(@RequestBody UserItemInputDTO userItemInputDTO) {
-        RentalCardOutputDTO rentalCardOutputDTO = returnItemUsecase.returnItem(userItemInputDTO);
+        RentalCardOutputDTO rentalCardOutputDTO = returnItemUsecase.returnItem(userItemInputDTO, LocalDate.now());
         return ResponseEntity.status(CREATED)
                 .body(rentalCardOutputDTO);
     }
 
     @PostMapping("/rentalCard/{userId}/clearOverdue")
-    public ResponseEntity<RentalResultOutputDTO> clearOverdueItem(@RequestBody ClearOverdueInfoDTO clearOverdueInfoDTO) {
-        RentalResultOutputDTO rentalResultOutputDTO = clearOverdueItemUsecase.clearOverdue(clearOverdueInfoDTO);
+    public ResponseEntity<RentalResultOutputDTO> clearOverdueItem(@RequestBody ClearOverdueInputDTO clearOverdueInputDTO) {
+        RentalResultOutputDTO rentalResultOutputDTO = clearOverdueItemUsecase.clearOverdue(clearOverdueInputDTO);
         return ResponseEntity.status(CREATED)
                 .body(rentalResultOutputDTO);
     }

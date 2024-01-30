@@ -20,10 +20,10 @@ public class ReturnItemInputPort implements ReturnItemUsecase {
     private final RentalCardOutputPort rentalCardOutputPort;
 
     @Override
-    public RentalCardOutputDTO returnItem(UserItemInputDTO userItemInputDto) {
+    public RentalCardOutputDTO returnItem(UserItemInputDTO userItemInputDto, LocalDate now) {
         RentalCard rentalCard = rentalCardOutputPort.findByUserId(userItemInputDto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 카드가 존재하지 않습니다."));
-        rentalCard.returnItem(Item.createItem(userItemInputDto.getItemId(), userItemInputDto.getItemTitle()), LocalDate.now());
+        rentalCard.returnItem(Item.createItem(userItemInputDto.getItemId(), userItemInputDto.getItemTitle()), now);
 
         return RentalCardOutputDTO.mapToDTO(rentalCard);
     }

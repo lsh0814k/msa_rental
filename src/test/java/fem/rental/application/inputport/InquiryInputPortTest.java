@@ -7,17 +7,17 @@ import fem.rental.application.usecase.RentItemUsecase;
 import fem.rental.application.usecase.ReturnItemUsecase;
 import fem.rental.framework.jpaadapter.RentalCardRepository;
 import fem.rental.framework.web.dto.*;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class InquiryInputPortTest {
@@ -100,7 +100,7 @@ class InquiryInputPortTest {
         UserItemInputDTO rentItem = UserItemInputDTOFactory.create();
         rentItemUsecase.rentItem(rentItem);
 
-        returnItemUsecase.returnItem(rentItem);
+        returnItemUsecase.returnItem(rentItem, LocalDate.now());
         List<ReturnItemOutputDTO> returnItems = inquiryInputPort.findAllReturnItems(userInputDTO.getUserId());
 
         assertThat(returnItems.size()).isEqualTo(1);

@@ -1,8 +1,8 @@
 package fem.rental.application.usecase;
 
 import fem.rental.framework.web.dto.RentalResultOutputDTO;
-import fem.rental.framework.web.dto.ClearOverdueInfoDTO;
+import fem.rental.framework.web.dto.ClearOverdueInputDTO;
 
 public interface ClearOverdueItemUsecase {
-    RentalResultOutputDTO clearOverdue(ClearOverdueInfoDTO clearOverdueInfoDTO);
+    RentalResultOutputDTO clearOverdue(ClearOverdueInputDTO clearOverdueInputDTO);
 }
