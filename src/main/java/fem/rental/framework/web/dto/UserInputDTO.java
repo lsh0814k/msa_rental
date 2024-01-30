@@ -17,4 +17,8 @@ public class UserInputDTO {
     public static UserInputDTO createUserInputDTO(UserItemInputDTO userItemInputDTO) {
         return new UserInputDTO(userItemInputDTO.getUserId(), userItemInputDTO.getUserNm());
     }
+
+    public static UserInputDTO createUserInputDTO(String userId, String userNm) {
+        return new UserInputDTO(userId, userNm);
+    }
 }
