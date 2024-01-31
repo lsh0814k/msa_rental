@@ -3,6 +3,7 @@ package fem.rental.domain.model;
 import fem.rental.domain.model.vo.*;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.domain.Persistable;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -18,7 +19,7 @@ import static lombok.AccessLevel.PROTECTED;
 @AllArgsConstructor(access = PRIVATE)
 @EqualsAndHashCode(of ="rentalCardNo")
 @Entity
-public class RentalCard extends BaseTime{
+public class RentalCard extends BaseTime implements Persistable<RentalCardNo> {
     @EmbeddedId
     private RentalCardNo rentalCardNo;
     @Embedded
@@ -112,5 +113,15 @@ public class RentalCard extends BaseTime{
 
     private void addRentalItem(RentalItem rentalItem) {
         this.rentalItems.add(rentalItem);
+    }
+
+    @Override
+    public RentalCardNo getId() {
+        return rentalCardNo;
+    }
+
+    @Override
+    public boolean isNew() {
+        return getCreatedDate() == null;
     }
 }
