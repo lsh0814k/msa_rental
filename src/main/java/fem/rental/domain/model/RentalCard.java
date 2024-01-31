@@ -18,7 +18,7 @@ import static lombok.AccessLevel.PROTECTED;
 @AllArgsConstructor(access = PRIVATE)
 @EqualsAndHashCode(of ="rentalCardNo")
 @Entity
-public class RentalCard {
+public class RentalCard extends BaseTime{
     @EmbeddedId
     private RentalCardNo rentalCardNo;
     @Embedded
