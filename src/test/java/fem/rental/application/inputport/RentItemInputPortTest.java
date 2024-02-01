@@ -1,7 +1,7 @@
 package fem.rental.application.inputport;
 
 import fem.rental.UserItemInputDTOFactory;
-import fem.rental.application.usecase.OverdueItemUsecase;
+import fem.rental.domain.model.RentalCard;
 import fem.rental.domain.model.vo.RentStatus;
 import fem.rental.framework.jpaadapter.RentalCardRepository;
 import fem.rental.framework.web.dto.RentalCardOutputDTO;
@@ -11,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -18,9 +19,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
+@Transactional
 class RentItemInputPortTest {
     @Autowired private RentItemInputPort rentItemInputPort;
-    @Autowired private OverdueItemUsecase overdueItemUsecase;
     @Autowired private RentalCardRepository rentalCardRepository;
     private static int MAX_SIZE = 5;
 
@@ -59,7 +60,8 @@ class RentItemInputPortTest {
         UserItemInputDTO userItemInputDTO = UserItemInputDTOFactory.create();
         rentItemInputPort.rentItem(userItemInputDTO);
 
-        overdueItemUsecase.overDueItem(userItemInputDTO, LocalDate.now().plusDays(15));
+        RentalCard rentalCard = rentalCardRepository.findByUserId(userItemInputDTO.getUserId()).get();
+        rentalCard.makeOverdueItems(LocalDate.now().plusDays(15));
 
         assertThatThrownBy(() -> rentItemInputPort.rentItem(userItemInputDTO))
                 .isInstanceOf(IllegalArgumentException.class)

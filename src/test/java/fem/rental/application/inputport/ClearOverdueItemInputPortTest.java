@@ -1,45 +1,33 @@
 package fem.rental.application.inputport;
 
 import fem.rental.ClearOverdueInputDTOFactory;
-import fem.rental.UserItemInputDTOFactory;
-import fem.rental.application.usecase.OverdueItemUsecase;
-import fem.rental.application.usecase.RentItemUsecase;
-import fem.rental.application.usecase.ReturnItemUsecase;
+import fem.rental.ItemFactory;
+import fem.rental.RentalCardFactory;
+import fem.rental.domain.model.RentalCard;
 import fem.rental.framework.jpaadapter.RentalCardRepository;
 import fem.rental.framework.web.dto.RentalResultOutputDTO;
-import fem.rental.framework.web.dto.UserItemInputDTO;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
+@Transactional
 class ClearOverdueItemInputPortTest {
     @Autowired private RentalCardRepository rentalCardRepository;
     @Autowired private ClearOverdueItemInputPort clearOverdueItemInputPort;
-    @Autowired private RentItemUsecase rentItemUsecase;
-    @Autowired private ReturnItemUsecase returnItemUsecase;
-    @Autowired private OverdueItemUsecase overDueItem;
-
-
-    @BeforeEach
-    void init() {
-        rentalCardRepository.deleteAll();
-    }
 
     @Test
     @DisplayName("연체 해제_연체된 도서를 반납하지 않은 경우")
     void clearOverdue_not_return() {
-        UserItemInputDTO userItemInputDTO = UserItemInputDTOFactory.create();
-        rentItemUsecase.rentItem(userItemInputDTO);
-
-        overDueItem.overDueItem(userItemInputDTO, LocalDate.now().plusDays(15));
+        RentalCard rentalCard = rentItem();
+        rentalCard.makeOverdueItems(LocalDate.now().plusDays(15));
 
         assertThatThrownBy(() -> clearOverdueItemInputPort.clearOverdue(ClearOverdueInputDTOFactory.create()))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -50,11 +38,8 @@ class ClearOverdueItemInputPortTest {
     @Test
     @DisplayName("연체 해제_포인트 부족")
     void clearOverdue_not_enough() {
-        UserItemInputDTO userItemInputDTO = UserItemInputDTOFactory.create();
-        rentItemUsecase.rentItem(userItemInputDTO);
-
-        overDueItem.overDueItem(userItemInputDTO, LocalDate.now().plusDays(16));
-        returnItemUsecase.returnItem(userItemInputDTO, LocalDate.now().plusDays(16));
+        RentalCard rentalCard = rentItem();
+        rentalCard.returnItem(ItemFactory.create(), LocalDate.now().plusDays(16));
 
         assertThatThrownBy(() -> clearOverdueItemInputPort.clearOverdue(ClearOverdueInputDTOFactory.create()))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -62,14 +47,22 @@ class ClearOverdueItemInputPortTest {
                 .isEqualTo("해당 포인트로 연체를 해제할 수 없습니다.");
     }
 
+
+    private RentalCard rentItem() {
+        RentalCard rentalCard = RentalCardFactory.create();
+        rentalCardRepository.save(rentalCard);
+        rentalCard.rentItem(ItemFactory.create());
+
+        return rentalCard;
+    }
+
     @Test
     @DisplayName("연체 해제")
     void clearOverdue() {
-        UserItemInputDTO userItemInputDTO = UserItemInputDTOFactory.create();
-        rentItemUsecase.rentItem(userItemInputDTO);
+        RentalCard rentalCard = rentItem();
 
-        overDueItem.overDueItem(userItemInputDTO, LocalDate.now().plusDays(15));
-        returnItemUsecase.returnItem(userItemInputDTO, LocalDate.now().plusDays(15));
+        rentalCard.makeOverdueItems(LocalDate.now().plusDays(15));
+        rentalCard.returnItem(ItemFactory.create(), LocalDate.now().plusDays(15));
 
         RentalResultOutputDTO rentalResultOutputDTO = clearOverdueItemInputPort.clearOverdue(ClearOverdueInputDTOFactory.create());
         assertThat(rentalResultOutputDTO.getRentedCount()).isEqualTo(0);
