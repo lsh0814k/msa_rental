@@ -1,5 +1,8 @@
 package fem.rental.domain.model;
 
+import fem.rental.domain.model.event.ItemRented;
+import fem.rental.domain.model.event.ItemReturned;
+import fem.rental.domain.model.event.OverdueCleared;
 import fem.rental.domain.model.vo.*;
 import jakarta.persistence.*;
 import lombok.*;
@@ -42,6 +45,18 @@ public class RentalCard extends BaseTime implements Persistable<RentalCardNo> {
                 .rentalItems(new ArrayList<>())
                 .returnItems(new ArrayList<>())
                 .build();
+    }
+
+    public static ItemRented createItemRentedEvent(IDName idName, Item item, long point) {
+        return ItemRented.create(idName, item, point);
+    }
+
+    public static ItemReturned createItemReturnedEvent(IDName idName, Item item, long point) {
+        return ItemReturned.create(idName, item, point);
+    }
+
+    public static OverdueCleared createOverdueClearedEvent(IDName idName, long point) {
+        return OverdueCleared.create(idName, point);
     }
 
     public RentalCard rentItem(Item item) {
