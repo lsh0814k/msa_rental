@@ -35,19 +35,6 @@ class ClearOverdueItemInputPortTest {
                 .isEqualTo("모든 도서가 반납되어야 정지를 해제할 수 있습니다.");
     }
 
-    @Test
-    @DisplayName("연체 해제_포인트 부족")
-    void clearOverdue_not_enough() {
-        RentalCard rentalCard = rentItem();
-        rentalCard.returnItem(ItemFactory.create(), LocalDate.now().plusDays(16));
-
-        assertThatThrownBy(() -> clearOverdueItemInputPort.clearOverdue(ClearOverdueInputDTOFactory.create()))
-                .isInstanceOf(IllegalArgumentException.class)
-                .message()
-                .isEqualTo("해당 포인트로 연체를 해제할 수 없습니다.");
-    }
-
-
     private RentalCard rentItem() {
         RentalCard rentalCard = RentalCardFactory.create();
         rentalCardRepository.save(rentalCard);

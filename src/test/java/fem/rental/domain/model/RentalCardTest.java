@@ -110,7 +110,7 @@ class RentalCardTest {
         rentalCard.makeOverdueItems(LocalDate.now().plusDays(15));
         rentalCard.returnItem(item, LocalDate.now().plusDays(15));
 
-        rentalCard.makeAvailableRental(10L);
+        rentalCard.makeAvailableRental();
         assertThat(rentalCard.getRentStatus()).isEqualTo(RentStatus.RENT_AVAILABLE);
     }
 
@@ -122,25 +122,9 @@ class RentalCardTest {
         rentalCard.rentItem(item);
 
         rentalCard.makeOverdueItems(LocalDate.now().plusDays(15));
-        assertThatThrownBy(() -> rentalCard.makeAvailableRental(10L))
+        assertThatThrownBy(() -> rentalCard.makeAvailableRental())
                 .isInstanceOf(IllegalArgumentException.class)
                 .message()
                 .isEqualTo("모든 도서가 반납되어야 정지를 해제할 수 있습니다.");
-    }
-
-    @Test
-    @DisplayName("상태 변경_포인트 부족")
-    void makeAvailableRental_notEnoughPoint() {
-        RentalCard rentalCard = RentalCard.createRentalCard(IDName.createIDName("id", "name"));
-        Item item = Item.createItem(1L, "MSA");
-        rentalCard.rentItem(item);
-
-        rentalCard.makeOverdueItems(LocalDate.now().plusDays(15));
-        rentalCard.returnItem(item, LocalDate.now().plusDays(15));
-
-        assertThatThrownBy(() -> rentalCard.makeAvailableRental(5L))
-                .isInstanceOf(IllegalArgumentException.class)
-                .message()
-                .isEqualTo("해당 포인트로 연체를 해제할 수 없습니다.");
     }
 }
