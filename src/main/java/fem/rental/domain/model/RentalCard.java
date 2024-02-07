@@ -70,7 +70,7 @@ public class RentalCard extends BaseTime implements Persistable<RentalCardNo> {
         RentalItem rentalItem = this.rentalItems.stream()
                 .filter(i -> i.getItem().equals(item)).findFirst().orElseThrow(() -> new IllegalArgumentException("대여한 품목이 아닙니다."));
         calculateLateFee(rentalItem, now);
-        this.addReturnItem(ReturnItem.createReturnItem(rentalItem, this));
+        this.addReturnItem(ReturnItem.createReturnItem(rentalItem, this, now));
         this.removeRentalItem(rentalItem);
 
         return this;
@@ -119,7 +119,7 @@ public class RentalCard extends BaseTime implements Persistable<RentalCardNo> {
                 .orElseThrow(() -> new IllegalArgumentException("반납된 도서가 없습니다."));
 
         this.removeReturnItem(returnItem);
-        RentalItem rentalItem = RentalItem.createRentalItem(item, this, returnItem.getRentDate());
+        RentalItem rentalItem = RentalItem.createRentalItem(item, this, returnItem.getReturnDate());
         this.addRentalItem(rentalItem);
         this.minusLateFee(rentalItem, returnItem.getReturnDate());
 

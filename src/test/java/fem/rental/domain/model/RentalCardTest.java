@@ -127,4 +127,75 @@ class RentalCardTest {
                 .message()
                 .isEqualTo("모든 도서가 반납되어야 정지를 해제할 수 있습니다.");
     }
+
+    @Test
+    @DisplayName("대여 취소")
+    void rent_cancel() {
+        RentalCard rentalCard = RentalCard.createRentalCard(IDName.createIDName("id", "name"));
+        Item item = Item.createItem(1L, "MSA");
+        rentalCard.rentItem(item);
+
+        rentalCard.cancelRentItem(item);
+
+        assertThat(rentalCard.getRentalItems().size()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("반납 취소")
+    void return_cancel() {
+        RentalCard rentalCard = RentalCard.createRentalCard(IDName.createIDName("id", "name"));
+        Item item = Item.createItem(1L, "MSA");
+        rentalCard.rentItem(item);
+
+        LocalDate now = LocalDate.now();
+        rentalCard.returnItem(item, now);
+        assertThat(rentalCard.getRentalItems().size()).isEqualTo(0);
+        assertThat(rentalCard.getReturnItems().size()).isEqualTo(1);
+
+
+        rentalCard.cancelReturnItem(item);
+
+        assertThat(rentalCard.getRentalItems().size()).isEqualTo(1);
+        assertThat(rentalCard.getReturnItems().size()).isEqualTo(0);
+        assertThat(rentalCard.getLateFee()).isEqualTo(LateFee.createLateFee(0L));
+        assertThat(rentalCard.getRentalItems().get(0).getRentDate()).isEqualTo(now);
+    }
+
+    @Test
+    @DisplayName("반납 취소 연체가 된 경우")
+    void return_cancel_overdue() {
+        RentalCard rentalCard = RentalCard.createRentalCard(IDName.createIDName("id", "name"));
+        Item item = Item.createItem(1L, "MSA");
+        rentalCard.rentItem(item);
+
+        LocalDate now = LocalDate.now().plusDays(16);
+        rentalCard.returnItem(item, now);
+        assertThat(rentalCard.getLateFee()).isEqualTo(LateFee.createLateFee(20L));
+
+
+        rentalCard.cancelReturnItem(item);
+        assertThat(rentalCard.getRentalItems().size()).isEqualTo(1);
+        assertThat(rentalCard.getReturnItems().size()).isEqualTo(0);
+        assertThat(rentalCard.getLateFee()).isEqualTo(LateFee.createLateFee(0L));
+        assertThat(rentalCard.getRentalItems().get(0).getRentDate()).isEqualTo(now);
+    }
+
+    @Test
+    @DisplayName("연체 해제 취소")
+    void overdueClear_cancel() {
+        RentalCard rentalCard = RentalCard.createRentalCard(IDName.createIDName("id", "name"));
+        Item item = Item.createItem(1L, "MSA");
+        rentalCard.rentItem(item);
+        rentalCard.makeOverdueItems(LocalDate.now().plusDays(16));
+        LocalDate now = LocalDate.now().plusDays(16);
+        rentalCard.returnItem(item, now);
+
+
+        long lateFee = rentalCard.makeAvailableRental();
+
+
+        rentalCard.cancelMakeAvailableRental(lateFee);
+        assertThat(rentalCard.getLateFee()).isEqualTo(LateFee.createLateFee(lateFee));
+        assertThat(rentalCard.getRentStatus()).isEqualTo(RentStatus.RENT_UNAVAILABLE);
+    }
 }
