@@ -61,7 +61,7 @@ public class RentalCard extends BaseTime implements Persistable<RentalCardNo> {
 
     public RentalCard rentItem(Item item) {
         checkRentalAvailable();
-        this.addRentalItem(RentalItem.createRentalItem(item, this));
+        this.addRentalItem(RentalItem.createRentalItem(item, this, LocalDate.now()));
 
         return this;
     }
@@ -81,7 +81,7 @@ public class RentalCard extends BaseTime implements Persistable<RentalCardNo> {
         changeRentStatus();
     }
 
-    public void makeAvailableRental(Long point) {
+    public void makeAvailableRental(long point) {
         if (this.rentalItems.size() > 0) throw new IllegalArgumentException("모든 도서가 반납되어야 정지를 해제할 수 있습니다.");
         if (this.lateFee.getPoint() != point) throw new IllegalArgumentException("해당 포인트로 연체를 해제할 수 없습니다.");
 
@@ -89,10 +89,39 @@ public class RentalCard extends BaseTime implements Persistable<RentalCardNo> {
         this.rentStatus = RentStatus.RENT_AVAILABLE;
     }
 
+    public void cancelMakeAvailableRental(long point) {
+        this.lateFee = lateFee.addPoint(point);
+        this.rentStatus = RentStatus.RENT_UNAVAILABLE;
+    }
+
     public List<RentalItem> overdueItems() {
         return this.rentalItems.stream()
                 .filter(RentalItem::isOverdue)
                 .toList();
+    }
+
+    public RentalCard cancelRentItem(Item item) {
+        RentalItem rentalItem = this.rentalItems.stream()
+                .filter(r -> r.getItem().equals(item))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("대여된 도서가 없습니다."));
+        this.removeRentalItem(rentalItem);
+
+        return this;
+    }
+
+    public RentalCard cancelReturnItem(Item item) {
+        ReturnItem returnItem = this.returnItems.stream()
+                .filter(r -> r.getItem().equals(item))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("반납된 도서가 없습니다."));
+
+        this.removeReturnItem(returnItem);
+        RentalItem rentalItem = RentalItem.createRentalItem(item, this, returnItem.getRentDate());
+        this.addRentalItem(rentalItem);
+        this.minusLateFee(rentalItem, returnItem.getReturnDate());
+
+        return this;
     }
 
     private void changeRentStatus() {
@@ -113,12 +142,21 @@ public class RentalCard extends BaseTime implements Persistable<RentalCardNo> {
         if (days > 0) this.lateFee = this.lateFee.addPoint(days * 10L);
     }
 
+    private void minusLateFee(RentalItem rentalItem, LocalDate now) {
+        int days = Period.between(rentalItem.getReturnDueDate(), now).getDays();
+        if (days > 0) this.lateFee = this.lateFee.removePoint(days * 10L);
+    }
+
     private void addReturnItem(ReturnItem returnItem) {
         this.returnItems.add(returnItem);
     }
 
     private void removeRentalItem(RentalItem rentalItem) {
         this.rentalItems.remove(rentalItem);
+    }
+
+    private void removeReturnItem(ReturnItem returnItem) {
+        this.returnItems.remove(returnItem);
     }
 
     private void checkRentalAvailable() {
